@@ -1,20 +1,22 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import Telemetry from "../models/Telemetry.js";
 
-async function connectDatabase() {
-  const mongoUri = process.env.MONGODB_URI;
+const connectDB = async () => {
+    await mongoose.connect(process.env.MONGODB_URI);
 
-  if (!mongoUri) {
-    console.warn("MONGODB_URI is not set. Starting without a database connection.");
-    return;
-  }
+    const db = mongoose.connection.db;
 
-  try {
-    await mongoose.connect(mongoUri);
-    console.log(`MongoDB connected: ${mongoose.connection.host}`);
-  } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
-  }
-}
+    const existing = await db.listCollections({
+        name: "telemetry"
+    }).next();
 
-module.exports = connectDatabase;
+    if (!existing) {
+        await Telemetry.createCollection();
+    } else if (!existing.options?.timeseries) {
+        throw new Error("Telemetry must be a time-series collection");
+    }
+
+    console.log("MongoDB connected successfully");
+};
+
+export default connectDB;

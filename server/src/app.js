@@ -1,22 +1,37 @@
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-const mongoose = require("mongoose");
+import express from "express";
+import cors from "cors";
+
+import telemetryRoutes from "./routes/telemetryRoutes.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 
-app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" }));
-app.use(morgan("dev"));
-app.use(express.json({ limit: "1mb" }));
+app.use(cors({
+    origin: process.env.CLIENT_ORIGIN ||
+        "http://localhost:5173"
+}));
 
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    service: "NexusFlow API",
-    database: mongoose.connection.readyState === 1 ? "connected" : "not connected",
-  });
+app.use(express.json());
+
+app.get("/", (req, res) => {
+
+    res.json({
+        message: "Welcome to NexusFlow API"
+    });
+
 });
 
-module.exports = app;
+app.get("/api/health", (req, res) => {
+
+    res.status(200).json({
+        success: true,
+        status: "Server is running"
+    });
+
+});
+
+app.use("/api/telemetry", telemetryRoutes);
+
+app.use(errorHandler);
+
+export default app;

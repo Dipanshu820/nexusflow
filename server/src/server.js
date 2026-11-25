@@ -1,16 +1,33 @@
-require("dotenv").config();
+import "dotenv/config";
+import app from "./app.js";
+import connectDB from "./config/db.js";
 
-const app = require("./app");
-const connectDatabase = require("./config/db");
+const PORT = process.env.PORT || 5000;
 
-const port = process.env.PORT || 5000;
+const startServer = async () => {
 
-async function startServer() {
-  await connectDatabase();
+    try {
 
-  app.listen(port, () => {
-    console.log(`NexusFlow API is running on http://localhost:${port}`);
-  });
-}
+        await connectDB();
+
+        app.listen(PORT, () => {
+
+            console.log(
+                `Server running on port ${PORT}`
+            );
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Server startup failed:",
+            error.message
+        );
+
+        process.exit(1);
+
+    }
+};
 
 startServer();
