@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-
+import flowRoutes from "./routes/flowRoutes.js";
 import telemetryRoutes from "./routes/telemetryRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -31,6 +31,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/telemetry", telemetryRoutes);
+app.use("/api/flows", flowRoutes);
 
 app.use(errorHandler);
 
