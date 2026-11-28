@@ -3,6 +3,7 @@ import cors from "cors";
 import flowRoutes from "./routes/flowRoutes.js";
 import telemetryRoutes from "./routes/telemetryRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
+import workflowRoutes from "./routes/workflowRoutes.js";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/telemetry", telemetryRoutes);
 app.use("/api/flows", flowRoutes);
+app.use("/api/workflows", workflowRoutes);
 
 app.use(errorHandler);
 
